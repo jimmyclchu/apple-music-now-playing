@@ -7,6 +7,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'private, max-age=0, no-cache');
+  next();
+});
+
 const DEVELOPER_TOKEN = process.env.DEVELOPER_TOKEN;
 const USER_TOKEN = process.env.USER_TOKEN;
 
