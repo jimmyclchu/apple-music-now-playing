@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server/server.js",
+    "dev": "nodemon api/index.js",
     "client": "node client/server.js",
     "build:client": "webpack"
   },
