@@ -6,7 +6,7 @@ This project lets you fetch and display the SVG image of the currently playing t
 
 Check out the live demo:
 
-<img src="https://apple-music-now-playing.vercel.app">
+![](https://apple-music-now-playing.vercel.app)
 
 ## Prerequisites
 
