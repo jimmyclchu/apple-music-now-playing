@@ -12,6 +12,9 @@
 		"deploy": "npm run pages:build && wrangler pages deploy",
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./env.d.ts"
 	},
+	"engines": {
+		"node": ">=20.0.0"
+	},
 	"dependencies": {
 		"@cloudflare/pages-plugin-turnstile": "^1.0.2",
 		"nanoid": "^5.1.5",
