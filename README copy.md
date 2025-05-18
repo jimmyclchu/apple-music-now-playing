@@ -1,8 +1,5 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
 
-![Diagram](./public/diagram.png)
-
-
 ## Getting Started
 
 First, run the development server:

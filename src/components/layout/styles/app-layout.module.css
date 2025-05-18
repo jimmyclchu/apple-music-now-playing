@@ -1,0 +1,24 @@
+.layoutContainer {
+  min-height: 100dvh;
+}
+
+.mainContent {
+  max-width: 100dvh;
+  margin: 0 auto;
+  font-size: 19px;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .mainContent {
+    padding: 0 1rem;
+  }
+}
+  
+
+@media (max-width: 768px) {
+  .mainContent {
+    font-size: 16px;
+    padding: 0 1rem;
+  }
+} 
+

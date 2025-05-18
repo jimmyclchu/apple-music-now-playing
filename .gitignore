@@ -41,5 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 # wrangler files
+wrangler.jsonc
 .wrangler
-.dev.vars*
+.dev.vars
+
+# fonts
+*.woff2

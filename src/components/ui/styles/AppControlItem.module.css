@@ -1,0 +1,29 @@
+.optionList {
+  display: flex;
+  gap: var(--gap-title);
+}
+
+@media screen and (max-width: 430px) {
+  .optionList {
+    gap: var(--gap-title);
+  }
+}
+
+.optionItem {
+  cursor: pointer;
+  transition: 0.1s;
+  border-bottom: 1px solid transparent;
+}
+
+.optionActive {
+  border-bottom: 1px solid var(--color-text-secondary);
+}
+
+.optionInactive {
+  color: var(--color-text-secondary);
+}
+
+.optionInactive:hover {
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-text-primary);
+}

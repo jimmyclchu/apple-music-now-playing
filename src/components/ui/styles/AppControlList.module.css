@@ -1,0 +1,11 @@
+.controlList {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media screen and (max-width: 430px) {
+  .controlList {
+    display: flex;
+    gap: var(--gap-item);
+  }
+}
