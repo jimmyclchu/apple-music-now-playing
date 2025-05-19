@@ -4,7 +4,12 @@ A Next.js application that displays your current Apple Music playback status wit
 
 ## Demo
 
-<img src="https://now-playing.jimmyclchu.com/w/Abs7rN0gwt" >
+- Main Application: https://now-playing.jimmyclchu.com
+- Widget: https://now-playing.jimmyclchu.com/w/O7RMtKQhqL
+- API:
+  ```bash
+  curl https://now-playing.jimmyclchu.com/api/connection/Abs7rN0gwt/recent-played
+  ```
 
 ## Prerequisites
 
