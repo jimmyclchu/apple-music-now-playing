@@ -29,7 +29,7 @@ export default function AppPreviewWidget({ size, color, fileType, apiEndpoint }:
   }, [size, color, fileType]);
 
   const imageURL = `${apiEndpoint}?size=${size}&theme=${color}&format=${fileType}`;
-  const shouldShowSkeleton = isLoading || apiEndpoint.includes('*');
+  const shouldShowSkeleton = isLoading || apiEndpoint.includes("*");
 
   return (
     <div 
