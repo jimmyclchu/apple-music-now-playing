@@ -89,10 +89,6 @@ export function useConnect(): UseConnectReturn {
     e.preventDefault();
     setIsLoading(true);
     
-    console.log("connect")
-    console.log(turnstileToken)
-
-  
     try {
       const music = window.MusicKit.getInstance();
       const userToken = music.musicUserToken;
