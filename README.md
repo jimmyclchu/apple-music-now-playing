@@ -4,7 +4,7 @@ A Next.js application that displays your current Apple Music playback status wit
 
 ## Demo
 
-![Demo](https://now-playing.jimmyclchu.com/w/Abs7rN0gwt)
+<img src="https://now-playing.jimmyclchu.com/w/Abs7rN0gwt" >
 
 ## Prerequisites
 
