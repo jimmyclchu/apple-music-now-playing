@@ -1,70 +1,75 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
+# Apple Music Now Playing
 
-![Diagram](./public/diagram.png)
+A Next.js application that displays your current Apple Music playback status with a SVG widget and API.
 
+## Demo
+
+![Demo](https://now-playing.jimmyclchu.com/w/Abs7rN0gwt)
+
+## Prerequisites
+
+- Node.js >= 20.0.0
+- npm or yarn
+- Cloudflare account (for deployment)
+- Apple Developer account
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+   ```bash
+   git clone [your-repo-url]
+   cd apple-music-now-playing
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up environment variables:
+   - Copy `wrangler.jsonc.example` to `wrangler.jsonc` and `.env.example` to `.env`
+   - Replace the following variables in `wrangler.jsonc` and `.env`:
+     - `<KV_ID>`: Your Cloudflare KV namespace ID
+     - `<TURNSTILE_SECRET_KEY>`: Your Cloudflare Turnstile secret key
+     - `<TURNSTILE_SITE_KEY>`: Your Cloudflare Turnstile site key
+     - `<APPLE_MUSIC_DEVELOPER_TOKEN>`: Your Apple Music developer token
+     - `<APPLE_MUSIC_APP_NAME>`: Your Apple Music app name
 
-## Cloudflare integration
+   To get these values:
+   - KV_ID: Create a KV namespace in Cloudflare and copy its ID
+   - Turnstile keys: Create a site in Cloudflare Turnstile and get the keys
+   - Apple Music credentials: Set up an app in Apple Developer portal
 
-Besides the `dev` script mentioned above `c3` has added a few extra scripts that allow you to integrate the application with the [Cloudflare Pages](https://pages.cloudflare.com/) environment, these are:
-  - `pages:build` to build the application for Pages using the [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages) CLI
-  - `preview` to locally preview your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
-  - `deploy` to deploy your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-> __Note:__ while the `dev` script is optimal for local development you should preview your Pages application as well (periodically or before deployments) in order to make sure that it can properly work in the Pages environment (for more details see the [`@cloudflare/next-on-pages` recommended workflow](https://github.com/cloudflare/next-on-pages/blob/main/internal-packages/next-dev/README.md#recommended-development-workflow))
+The application will be available at `http://localhost:3000`.
 
-### Bindings
+## Deployment
 
-Cloudflare [Bindings](https://developers.cloudflare.com/pages/functions/bindings/) are what allows you to interact with resources available in the Cloudflare Platform.
+This project is configured for deployment to Cloudflare Pages. To deploy:
 
-You can use bindings during development, when previewing locally your application and of course in the deployed application:
+1. Ensure you have the Cloudflare Wrangler CLI installed
+2. Configure your Cloudflare credentials in `wrangler.jsonc`
+3. Run:
+   ```bash
+   npm run deploy
+   ```
 
-- To use bindings in dev mode you need to define them in the `next.config.js` file under `setupDevBindings`, this mode uses the `next-dev` `@cloudflare/next-on-pages` submodule. For more details see its [documentation](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md).
+## Technologies Used
 
-- To use bindings in the preview mode you need to add them to the `pages:preview` script accordingly to the `wrangler pages dev` command. For more details see its [documentation](https://developers.cloudflare.com/workers/wrangler/commands/#dev-1) or the [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+![Architecture Diagram](/public/diagram.png)
 
-- To use bindings in the deployed application you will need to configure them in the Cloudflare [dashboard](https://dash.cloudflare.com/). For more details see the  [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+- Next.js
+- TypeScript
+- Cloudflare Pages
+- Cloudflare KV
+- Cloudflare Turnstile
+- MusicKit
+- Apple Music API
 
-#### KV Example
+## License
 
-`c3` has added for you an example showing how you can use a KV binding.
-
-In order to enable the example:
-- Search for javascript/typescript lines containing the following comment:
-  ```ts
-  // KV Example:
-  ```
-  and uncomment the commented lines below it (also uncomment the relevant imports).
-- In the `wrangler.jsonc` file add the following configuration line:
-  ```
-  "kv_namespaces": [{ "binding": "MY_KV_NAMESPACE", "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" }],
-  ```
-- If you're using TypeScript run the `cf-typegen` script to update the `env.d.ts` file:
-  ```bash
-  npm run cf-typegen
-  # or
-  yarn cf-typegen
-  # or
-  pnpm cf-typegen
-  # or
-  bun cf-typegen
-  ```
-
-After doing this you can run the `dev` or `preview` script and visit the `/api/hello` route to see the example in action.
-
-Finally, if you also want to see the example work in the deployed application make sure to add a `MY_KV_NAMESPACE` binding to your Pages application in its [dashboard kv bindings settings section](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions#kv_namespace_bindings_section). After having configured it make sure to re-deploy your application.
+MIT
