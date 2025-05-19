@@ -11,7 +11,7 @@ export function Header() {
         <span>Now Playing</span>
       </h1>
       <p className={styles.description}>
-        Create a beautiful widget to display your current Apple Music track
+        Find out what&apos;s playing with widget and API.
       </p>
       <div className={styles.links}>
         <Link 

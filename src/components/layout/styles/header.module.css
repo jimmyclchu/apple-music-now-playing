@@ -22,7 +22,7 @@
     justify-content: flex-end;
     align-items: flex-start;
     gap: var(--gap-title);
-    height: calc(var(--gap-section) * 2.5);
+    height: calc(var(--gap-section) * 4);
   }
 } 
 
