@@ -19,6 +19,13 @@
 			"id": "<KV_ID>"
 		}
 	],
+	"vars": { 
+		"TURNSTILE_SECRET_KEY": "<TURNSTILE_SECRET_KEY>",
+		"NEXT_PUBLIC_TURNSTILE_SITE_KEY": "<TURNSTILE_SITE_KEY>",
+		"NEXT_PUBLIC_APPLE_MUSIC_DEVELOPER_TOKEN": "<APPLE_MUSIC_DEVELOPER_TOKEN>",
+		"NEXT_PUBLIC_APPLE_MUSIC_APP_NAME": "<APPLE_MUSIC_APP_NAME>"
+	},
+
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
