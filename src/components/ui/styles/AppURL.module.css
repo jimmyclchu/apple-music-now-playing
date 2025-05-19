@@ -27,11 +27,33 @@
   white-space: nowrap;
   overflow-x: auto;
   padding-right: 1rem;
+  display: flex;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.character {
+  display: inline-block;
+  animation: jump 0.2s ease-in-out;
+  animation-fill-mode: both;
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
   .urlText {
-    
-  width: calc(100dvw - 2rem);
+    width: calc(100dvw - 2rem);
   }
 }
