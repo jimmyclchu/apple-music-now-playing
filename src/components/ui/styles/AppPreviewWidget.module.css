@@ -9,12 +9,12 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    rgba(252, 253, 250, 0.8) 0%,
-    rgba(252, 253, 250, 0.9) 20%,
-    rgba(252, 253, 250, 0.95) 40%,
-    rgba(252, 253, 250, 0.9) 60%,
-    rgba(252, 253, 250, 0.8) 80%,
-    rgba(252, 253, 250, 0.8) 100%
+    rgba(230, 231, 228, 0.8) 0%,
+    rgba(230, 231, 228, 0.9) 20%,
+    rgba(230, 231, 228, 0.95) 40%,
+    rgba(230, 231, 228, 0.9) 60%,
+    rgba(230, 231, 228, 0.8) 80%,
+    rgba(230, 231, 228, 0.8) 100%
   );
   background-size: 300% 100%;
   animation: wave 2s ease-in-out infinite;
@@ -32,7 +32,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.3) 50%,
     transparent 100%
   );
   animation: shimmer 2s ease-in-out infinite;

@@ -1,6 +1,9 @@
 .section {
   display: grid;
   grid-template-columns: 1fr 3fr;
+}
+
+.section:not(:last-child) {
   margin-bottom: var(--gap-section);
 }
 

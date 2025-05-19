@@ -16,6 +16,7 @@ interface TurnstileResponse {
   */
 
 export async function POST(request: Request) {
+  console.log("haha")
   try {
     // Validate request body
     let body: TokenRequest;
@@ -68,7 +69,8 @@ export async function POST(request: Request) {
 
     // Generate a unique connection ID (you might want to use a more robust method)
     const connectionId = nanoid(10);
-    
+    console.log("connectionId", connectionId)
+
     // Set token in KV store
     await setUserToken(connectionId, body.token);
     

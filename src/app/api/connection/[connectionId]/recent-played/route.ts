@@ -2,16 +2,16 @@ import { getNowPlaying } from "@/lib/apple-music";
 import { getUserToken } from "@/lib/kv";
 
 export const runtime = "edge";
+export const revalidate = 180;
 
-export async function GET(request: Request) {
-  const connectionId = request.headers.get("x-connection-id");
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ connectionId: string }> }
+) {
+  const { connectionId } = await params;
 
   if (!connectionId) {
     return new Response("No connection id", { status: 400 });
-  }
-
-  if (!/^[0-9a-z]{10}$/.test(connectionId)) {
-    return new Response("Invalid connection id", { status: 400 });
   }
 
   const userToken = await getUserToken(connectionId);
@@ -21,5 +21,5 @@ export async function GET(request: Request) {
 
   const nowPlaying = await getNowPlaying(userToken);
 
-  return new Response(JSON.stringify(nowPlaying));
+  return Response.json(nowPlaying);
 }

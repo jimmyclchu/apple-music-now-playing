@@ -48,11 +48,10 @@ export interface UseConnectReturn {
   apiEndpoint: string;
   curlCommand: string;
   apiResponse: string;
-  copySuccess: boolean;
+  connectionId: string;
   setActiveSize: (size: Size) => void;
   setActiveColor: (color: Color) => void;
   setActiveFileType: (type: FileType) => void;
   setInputValue: (value: string) => void;
   handleConnect: (e: React.FormEvent) => Promise<void>;
-  handleCopy: () => Promise<void>;
 }

@@ -77,6 +77,7 @@ export function ConnectWidget({
             size={activeSize}
             color={activeColor}
             fileType={activeFileType}
+            apiEndpoint={apiEndpoint}
           />
         </AppSectionItem>
       </AppSectionBody>

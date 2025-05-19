@@ -1,7 +1,31 @@
 import { NextRequest } from "next/server";
 import { getUserToken } from "@/lib/kv";
+import { getNowPlaying } from "@/lib/apple-music";
 
 export const runtime = "edge";
+
+interface AppleMusicItem {
+  id: string;
+  type: string;
+  attributes: {
+    artwork: {
+      url: string;
+    };
+    // For tracks
+    artistName?: string;
+    name?: string;
+    releaseDate?: string;
+    genreNames?: string[];
+    // For playlists
+    curatorName?: string;
+    lastModifiedDate?: string;
+  };
+}
+
+interface AppleMusicResponse {
+  next: string;
+  data: AppleMusicItem[];
+}
 
 interface SVGConfig {
   width: number;
@@ -34,15 +58,24 @@ const generateFontStyles = (fontPath: string) => `
   }
 `;
 
-const generateTextLines = (text: string, maxWidth: number) => {
+const escapeXml = (unsafe: string): string => {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/"/g, "&apos;");
+};
+
+const generateTextLines = (text: string, maxWidth: number, textWidth: number = 12, lineLimit: number = 3) => {
   const words = text.split(" ");
   let currentLine: string[] = [];
   const lines: string[][] = [];
   
   words.forEach(word => {
-    const wordWidth = word.length * 9; // Approximate width of text
+    const wordWidth = word.length * textWidth; // Use configurable text width
     if (currentLine.length > 0 && 
-        (currentLine.join(" ").length * 9 + wordWidth) > maxWidth) {
+        (currentLine.join(" ").length * textWidth + wordWidth) > maxWidth) {
       lines.push(currentLine);
       currentLine = [word];
     } else {
@@ -53,9 +86,19 @@ const generateTextLines = (text: string, maxWidth: number) => {
   if (currentLine.length > 0) {
     lines.push(currentLine);
   }
+
+  // Use configurable line limit
+  const limitedLines = lines.slice(0, lineLimit);
+  if (lines.length > lineLimit) {
+    // Add ellipsis to the last line if it"s not empty
+    if (limitedLines[lineLimit - 1].length > 0) {
+      limitedLines[lineLimit - 1] = limitedLines[lineLimit - 1].slice(0, -1);
+      limitedLines[lineLimit - 1].push("...");
+    }
+  }
   
-  return lines.map((line, lineIndex) => 
-    `<tspan x="180" dy="${lineIndex === 0 ? 0 : 20}">${line.join(" ")}</tspan>`
+  return limitedLines.map((line, lineIndex) => 
+    `<tspan x="180" dy="${lineIndex === 0 ? 0 : 20}">${escapeXml(line.join(" "))}</tspan>`
   ).join("");
 };
 
@@ -84,7 +127,7 @@ const generateSVG = (config: SVGConfig, songData: {
         </clipPath>
       </defs>
       <image 
-        href="${songData.albumArt}"
+        href="${escapeXml(songData.albumArt)}"
         x="10"
         y="10"
         width="160"
@@ -97,17 +140,17 @@ const generateSVG = (config: SVGConfig, songData: {
           Now playing
         </text>
       </a>
-      <text x="180" y="36" font-family="GT America, sans-serif" font-size="14" dominant-baseline="middle" fill="${textColor}">
-        ${songData.artist}
+      <text x="180" y="42" font-family="GT America, sans-serif" font-size="14" dominant-baseline="middle" fill="${textColor}">
+        ${generateTextLines(songData.artist, maxWidth, 6, 2)}
       </text>
-      <text x="180" y="73" font-family="GT America, sans-serif" font-size="17" dominant-baseline="middle" fill="${textColor}">
-        ${generateTextLines(songData.title, maxWidth)}
+      <text x="180" y="84" font-family="GT America, sans-serif" font-size="17" dominant-baseline="middle" fill="${textColor}">
+        ${generateTextLines(songData.title, maxWidth, 8, 3)}
       </text>
       <text x="180" y="142" font-family="GT America, sans-serif" font-size="14" dominant-baseline="middle" fill="${textColor}">
-        ${songData.year}
+        ${escapeXml(songData.year)}
       </text>
       <text x="180" y="160" font-family="GT America, sans-serif" font-size="14" dominant-baseline="middle" fill="${textColor}">
-        ${songData.genre}
+        ${escapeXml(songData.genre)}
       </text>
     </svg>
   `.trim();
@@ -127,24 +170,44 @@ export async function GET(
     return new Response("No user token", { status: 404 });
   }
 
-  const config = getSVGConfig(size, theme);
-  
-  // TODO: Replace with actual song data from your API
-  const songData = {
-    albumArt: "https://is5-ssl.mzstatic.com/image/thumb/Music112/v4/3e/04/eb/3e04ebf6-370f-f59d-ec84-2c2643db92f1/196626945068.jpg/600x600bb.jpg",
-    artist: "King Crimson",
-    title: "Somewhere over the rainbow",
-    year: "2023",
-    genre: "Progressive Rock"
-  };
+  try {
+    const nowPlaying = await getNowPlaying(userToken) as AppleMusicResponse;
+    const recentItem = nowPlaying.data[0];
+    
+    if (!recentItem) {
+      return new Response("No recent items found", { status: 404 });
+    }
 
-  const svg = generateSVG(config, songData);
+    const isPlaylist = recentItem.type === "playlists";
+    const artist = isPlaylist ? recentItem.attributes.curatorName : recentItem.attributes.artistName;
+    const title = recentItem.attributes.name;
+    
+    if (!artist || !title) {
+      return new Response("Missing required fields", { status: 404 });
+    }
 
-  return new Response(svg, {
-    status: 200,
-    headers: { 
-      "Content-Type": "image/svg+xml",
-      "Cache-Control": "public, max-age=180",
-    },
-  });
+    const songData = {
+      albumArt: recentItem.attributes.artwork.url.replace("{w}", "360").replace("{h}", "360"),
+      artist,
+      title,
+      year: isPlaylist 
+        ? new Date(recentItem.attributes.lastModifiedDate || "").getFullYear().toString()
+        : new Date(recentItem.attributes.releaseDate || "").getFullYear().toString(),
+      genre: isPlaylist ? "Playlist" : (recentItem.attributes.genreNames?.[0] || "Unknown")
+    };
+
+    const config = getSVGConfig(size, theme);
+    const svg = generateSVG(config, songData);
+
+    return new Response(svg, {
+      status: 200,
+      headers: { 
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "public, max-age=180",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching now playing:", error);
+    return new Response("Error fetching now playing", { status: 500 });
+  }
 }
