@@ -1,13 +1,32 @@
-const TURNSTILE_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
+"use server"
 
-export async function validateTurnstile(token: string) {
-  const response = await fetch(TURNSTILE_URL, {
-    method: "POST",
+import { getSecretKey } from "./get-key";
+interface TurnstileResponse {
+  success: boolean;
+  'error-codes'?: string[];
+}
+
+export async function validateTurnstile(
+  token: string,
+  remoteIp: string,
+): Promise<{ success: boolean; errorMessage?: string }> {
+
+  const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      secret: TURNSTILE_SECRET_KEY,
+      secret: getSecretKey(),
       response: token,
+      remoteip: remoteIp,
     }),
   });
-  return response.json();
+
+  const data = await response.json() as TurnstileResponse;
+
+  return {
+    success: data.success === true,
+    errorMessage: data['error-codes']?.join(', ')
+  };
 }

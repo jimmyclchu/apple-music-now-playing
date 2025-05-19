@@ -82,9 +82,17 @@ export function useConnect(): UseConnectReturn {
     ]
 }`;
 
-  const handleConnect = async (e: React.FormEvent) => {
+  const handleConnect = async (
+    e: React.FormEvent, 
+    turnstileToken: string | null
+  ) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    console.log("connect")
+    console.log(turnstileToken)
+
+  
     try {
       const music = window.MusicKit.getInstance();
       const userToken = music.musicUserToken;
@@ -96,10 +104,9 @@ export function useConnect(): UseConnectReturn {
         },
         body: JSON.stringify({
           token: userToken,
-          turnstileToken: "sdfj53evJ_m6",
+          turnstileToken: turnstileToken,
         })
       });
-      
       const data = await response.json() as ConnectionResponse;
       
       if (response.ok && data.connectionId) {

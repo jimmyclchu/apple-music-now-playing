@@ -53,5 +53,5 @@ export interface UseConnectReturn {
   setActiveColor: (color: Color) => void;
   setActiveFileType: (type: FileType) => void;
   setInputValue: (value: string) => void;
-  handleConnect: (e: React.FormEvent) => Promise<void>;
+  handleConnect: (e: React.FormEvent, turnstileToken: string | null) => Promise<void>;
 }

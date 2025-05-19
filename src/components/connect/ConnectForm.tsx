@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FormEvent, useState, useEffect } from "react";
+import React, { FormEvent, useState, useEffect, useRef } from "react";
 import styles from "./styles/connect.module.css";
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import { getSiteKey } from "@/lib/turnstile/get-key";
 
 declare global {
   interface Window {
@@ -13,7 +15,7 @@ interface ConnectFormProps {
   inputValue: string;
   response: string | null;
   setInputValue: (value: string) => void;
-  handleConnect: (e: FormEvent) => Promise<void>;
+  handleConnect: (e: FormEvent, turnstileToken: string | null) => Promise<void>;
 }
 
 export function ConnectForm({
@@ -24,11 +26,15 @@ export function ConnectForm({
   const [showSpinner, setShowSpinner] = useState(false);
   const [musicKitLoaded, setMusicKitLoaded] = useState(false);
   const [musicKitInstance, setMusicKitInstance] = useState<any>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileVerified, setTurnstileVerified] = useState<boolean>(false)
 
   useEffect(() => {
     const handleMusicKitLoaded = async () => {
       try {
         const instance = window.MusicKit.getInstance();
+
         setMusicKitInstance(instance);
         setMusicKitLoaded(true);
       } catch (error) {
@@ -50,7 +56,7 @@ export function ConnectForm({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setShowSpinner(true);
-    
+
     if (!musicKitLoaded || !musicKitInstance) {
       setShowSpinner(false);
       return;
@@ -60,7 +66,7 @@ export function ConnectForm({
       await musicKitInstance.authorize();
       
       if (musicKitInstance.isAuthorized) {
-        await handleConnect(e);
+        await handleConnect(e, turnstileToken);
       }
     } catch (error) {
       console.error("Authorization error:", error);
@@ -75,14 +81,26 @@ export function ConnectForm({
         className={styles.form}
         onSubmit={handleSubmit}
       >
+
+      {!showSpinner && (
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={getSiteKey()}
+        onSuccess={token => {
+          setTurnstileToken(token);
+          setTurnstileVerified(true);
+          }}
+        />
+      )}
+        
         {!showSpinner && !isLoading && (
           <button
             className={styles.button}
             type="submit"
             style={{ marginBottom: "1rem" }}
-            disabled={isLoading || showSpinner || !musicKitLoaded}
+            disabled={isLoading || showSpinner || !musicKitLoaded || !turnstileVerified}
           >
-            Connect
+            {turnstileVerified ? "Connect" : "Verifying..."}
           </button>
         )}
         {showSpinner && <div className={styles.spinner} />}
